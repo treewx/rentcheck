@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RentCheck - Property Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .property-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .property-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .property-card:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .property-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .property-info h3 {
+            color: #333;
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .property-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #666;
+            min-width: 80px;
+        }
+
+        .detail-value {
+            color: #333;
+        }
+
+        .property-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .property-actions .btn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .close {
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .property-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .property-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 Property Management</h1>
+            <p>Add, edit, and manage your rental properties</p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="/" class="btn btn-secondary">← Back to Dashboard</a>
+            <a href="/settings" class="btn btn-secondary">⚙️ Settings</a>
+            <button onclick="openAddModal()" class="btn btn-success">+ Add New Property</button>
+        </div>
+
+        <div class="card">
+            <h2>🏘️ Your Properties</h2>
+            <div id="propertyList" class="property-list">
+                {% if properties %}
+                    {% for property in properties %}
+                    <div class="property-card" data-property-id="{{ property.id }}">
+                        <div class="property-header">
+                            <div class="property-info">
+                                <h3>{{ property.property_name }}</h3>
+                                <p style="color: #666;">{{ property.tenant_name }}</p>
+                            </div>
+                            <div class="property-actions">
+                                <button onclick="editProperty({{ property.id }})" class="btn btn-secondary">✏️ Edit</button>
+                                <button onclick="deleteProperty({{ property.id }})" class="btn btn-danger">🗑️ Delete</button>
+                            </div>
+                        </div>
+                        
+                        <div class="property-details">
+                            <div class="detail-item">
+                                <span class="detail-label">💰 Rent:</span>
+                                <span class="detail-value">${{ property.rent_amount }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">📅 Due:</span>
+                                <span class="detail-value">{{ property.due_day }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">🔄 Frequency:</span>
+                                <span class="detail-value">{{ property.payment_frequency or '1 week' }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">🔍 Keyword:</span>
+                                <span class="detail-value">{{ property.payment_keyword }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">📆 Added:</span>
+                                <span class="detail-value">{{ property.created_at[:10] if property.created_at else 'N/A' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align: center; color: #666; font-style: italic; padding: 40px;">
+                        <h3>No properties added yet</h3>
+                        <p>Click "Add New Property" to get started!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Property Modal -->
+    <div id="propertyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Property</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <form id="propertyForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="propertyName">Property Name *</label>
+                        <input type="text" id="propertyName" name="property_name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tenantName">Tenant Name *</label>
+                        <input type="text" id="tenantName" name="tenant_name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="rentAmount">Rent Amount *</label>
+                        <input type="number" id="rentAmount" name="rent_amount" step="0.01" min="0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dueDay">Due Day *</label>
+                        <select id="dueDay" name="due_day" required>
+                            <option value="">Select day...</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                            <option value="Sunday">Sunday</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="paymentFrequency">Payment Frequency *</label>
+                        <select id="paymentFrequency" name="payment_frequency" required>
+                            <option value="">Select frequency...</option>
+                            <option value="1 week">Every Week</option>
+                            <option value="2 weeks">Every 2 Weeks (Fortnightly)</option>
+                            <option value="4 weeks">Every 4 Weeks (Monthly)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="paymentKeyword">Payment Keyword *</label>
+                    <input type="text" id="paymentKeyword" name="payment_keyword" required 
+                           placeholder="e.g., tenant name or property reference">
+                    <small style="color: #666; margin-top: 5px; display: block;">
+                        This keyword will be used to identify rent payments in your bank transactions
+                    </small>
+                </div>
+                
+                <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
+                    <button type="button" onclick="closeModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-success" id="submitBtn">Add Property</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentPropertyId = null;
+        let isEditMode = false;
+
+        function openAddModal() {
+            currentPropertyId = null;
+            isEditMode = false;
+            document.getElementById('modalTitle').textContent = 'Add New Property';
+            document.getElementById('submitBtn').textContent = 'Add Property';
+            document.getElementById('propertyForm').reset();
+            document.getElementById('propertyModal').style.display = 'block';
+        }
+
+        function editProperty(propertyId) {
+            currentPropertyId = propertyId;
+            isEditMode = true;
+            document.getElementById('modalTitle').textContent = 'Edit Property';
+            document.getElementById('submitBtn').textContent = 'Update Property';
+            
+            // Find the property card and extract data
+            const propertyCard = document.querySelector(`[data-property-id="${propertyId}"]`);
+            const propertyName = propertyCard.querySelector('h3').textContent;
+            const tenantName = propertyCard.querySelector('p').textContent;
+            
+            // Extract details from the detail items
+            const detailItems = propertyCard.querySelectorAll('.detail-value');
+            const rentAmount = detailItems[0].textContent.replace('$', '');
+            const dueDay = detailItems[1].textContent;
+            const paymentFrequency = detailItems[2].textContent;
+            const paymentKeyword = detailItems[3].textContent;
+            
+            // Populate form
+            document.getElementById('propertyName').value = propertyName;
+            document.getElementById('tenantName').value = tenantName;
+            document.getElementById('rentAmount').value = rentAmount;
+            document.getElementById('dueDay').value = dueDay;
+            document.getElementById('paymentFrequency').value = paymentFrequency;
+            document.getElementById('paymentKeyword').value = paymentKeyword;
+            
+            document.getElementById('propertyModal').style.display = 'block';
+        }
+
+        async function deleteProperty(propertyId) {
+            if (confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
+                try {
+                    const response = await fetch(`/delete_property/${propertyId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showNotification('Property deleted successfully!', 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showNotification('Error deleting property', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Network error: ' + error.message, 'error');
+                }
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('propertyModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('propertyModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('propertyForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                let url = isEditMode ? `/update_property/${currentPropertyId}` : '/add_property';
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const message = isEditMode ? 'Property updated successfully!' : 'Property added successfully!';
+                    showNotification(message, 'success');
+                    closeModal();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showNotification('Error saving property', 'error');
+                }
+            } catch (error) {
+                showNotification('Network error: ' + error.message, 'error');
+            }
+        });
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: bold;
+                z-index: 1001;
+                animation: slideIn 0.3s ease;
+                max-width: 300px;
+            `;
+            
+            if (type === 'success') {
+                notification.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+            } else {
+                notification.style.background = 'linear-gradient(135deg, #dc3545 0%, #fd7e14 100%)';
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
