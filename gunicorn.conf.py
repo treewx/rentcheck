@@ -2,14 +2,15 @@
 Gunicorn configuration for production deployment
 """
 import multiprocessing
-from decouple import config
+import os
 
 # Server socket
-bind = config('BIND', default='127.0.0.1:8000')
+port = os.environ.get('PORT', '8000')
+bind = f"0.0.0.0:{port}"
 backlog = 2048
 
 # Worker processes
-workers = config('WORKERS', default=multiprocessing.cpu_count() * 2 + 1, cast=int)
+workers = int(os.environ.get('WORKERS', multiprocessing.cpu_count() * 2 + 1))
 worker_class = 'sync'
 worker_connections = 1000
 timeout = 30
@@ -20,9 +21,9 @@ max_requests = 1000
 max_requests_jitter = 50
 
 # Logging
-accesslog = 'logs/access.log'
-errorlog = 'logs/error.log'
-loglevel = config('LOG_LEVEL', default='info')
+accesslog = '-'  # Log to stdout for Railway
+errorlog = '-'   # Log to stderr for Railway
+loglevel = os.environ.get('LOG_LEVEL', 'info')
 access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"'
 
 # Process naming

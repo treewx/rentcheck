@@ -1,6 +1,8 @@
-# RentCheck - Landlord Rent Monitoring Web App
+# RentCheck - Automated Rent Payment Monitoring
 
-A streamlined web application that helps landlords monitor rental payments and get notified when rent is overdue.
+A production-ready multi-user Flask application for landlords to monitor rental payments through automated bank transaction monitoring via the Akahu API.
+
+🚀 **Live Demo**: [Deployed on Railway](https://your-railway-url-here.railway.app)
 
 ## Features
 

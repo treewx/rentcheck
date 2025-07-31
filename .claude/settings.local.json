@@ -9,8 +9,20 @@
       "Bash(railway --version)",
       "Bash(railway login:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git branch:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(git config:*)",
+      "Bash(gh:*)",
+      "Bash(pkill:*)",
+      "Bash(taskkill:*)",
+      "Bash(wmic:*)",
+      "Bash(curl:*)",
+      "Bash(git pull:*)"
     ],
     "deny": []
-  }
+  },
+  "$schema": "https://json.schemastore.org/claude-code-settings.json"
 }
