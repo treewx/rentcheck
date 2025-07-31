@@ -293,6 +293,7 @@
             <div id="connectionStatus"></div>
 
             <form id="settingsForm">
+                {{ csrf_token() }}
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="akahuAppToken">Akahu App Token *</label>
@@ -363,6 +364,7 @@
             </div>
 
             <form id="emailSettingsForm">
+                {{ csrf_token() }}
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="emailRecipient">Your Email Address *</label>
@@ -385,6 +387,19 @@
     </div>
 
     <script>
+        // Function to get CSRF token from meta tag or form
+        function getCSRFToken() {
+            // Try to get from meta tag first
+            let token = document.querySelector('meta[name="csrf-token"]');
+            if (token) return token.getAttribute('content');
+            
+            // Try to get from hidden input in forms
+            let hiddenInput = document.querySelector('input[name="csrf_token"]');
+            if (hiddenInput) return hiddenInput.value;
+            
+            return null;
+        }
+
         async function testConnection() {
             const testBtn = document.getElementById('testBtn');
             const statusDiv = document.getElementById('connectionStatus');
@@ -485,11 +500,15 @@
             const formData = new FormData(this);
             const data = Object.fromEntries(formData.entries());
             
+            // Get CSRF token
+            const csrfToken = getCSRFToken();
+            
             try {
                 const response = await fetch('/save_settings', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
                     },
                     body: JSON.stringify(data)
                 });
@@ -515,11 +534,15 @@
             const formData = new FormData(this);
             const data = Object.fromEntries(formData.entries());
             
+            // Get CSRF token
+            const csrfToken = getCSRFToken();
+            
             try {
                 const response = await fetch('/save_settings', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
                     },
                     body: JSON.stringify(data)
                 });
