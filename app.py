@@ -86,12 +86,19 @@ EMAIL_CONFIG = {
 @contextmanager
 def get_db():
     """Database connection context manager"""
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
+    conn = None
     try:
+        conn = sqlite3.connect(DATABASE)
+        conn.row_factory = sqlite3.Row
         yield conn
+    except Exception as e:
+        app.logger.error(f'Database connection error: {str(e)}')
+        if conn:
+            conn.rollback()
+        raise
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 def init_db():
     """Initialize the database with required tables"""
@@ -195,14 +202,18 @@ def verify_password(password, password_hash):
 
 def get_current_user():
     """Get the current logged-in user"""
-    if 'user_id' in session:
-        with get_db() as conn:
-            user = conn.execute(
-                'SELECT * FROM users WHERE id = ?', 
-                (session['user_id'],)
-            ).fetchone()
-            return dict(user) if user else None
-    return None
+    try:
+        if 'user_id' in session:
+            with get_db() as conn:
+                user = conn.execute(
+                    'SELECT * FROM users WHERE id = ?', 
+                    (session['user_id'],)
+                ).fetchone()
+                return dict(user) if user else None
+        return None
+    except Exception as e:
+        app.logger.error(f'Error getting current user: {str(e)}')
+        return None
 
 def login_required(f):
     """Decorator to require login for routes"""
@@ -215,18 +226,22 @@ def login_required(f):
 
 def get_setting(key, default=None, user_id=None):
     """Get a user setting value"""
-    if user_id is None:
-        current_user = get_current_user()
-        if not current_user:
-            return default
-        user_id = current_user['id']
-    
-    with get_db() as conn:
-        result = conn.execute(
-            'SELECT setting_value FROM user_settings WHERE user_id = ? AND setting_key = ?', 
-            (user_id, key)
-        ).fetchone()
-        return result['setting_value'] if result else default
+    try:
+        if user_id is None:
+            current_user = get_current_user()
+            if not current_user:
+                return default
+            user_id = current_user['id']
+        
+        with get_db() as conn:
+            result = conn.execute(
+                'SELECT setting_value FROM user_settings WHERE user_id = ? AND setting_key = ?', 
+                (user_id, key)
+            ).fetchone()
+            return result['setting_value'] if result else default
+    except Exception as e:
+        app.logger.error(f'Error getting setting {key} for user {user_id}: {str(e)}')
+        return default
 
 def set_setting(key, value, user_id=None):
     """Set a user setting value"""
@@ -478,29 +493,36 @@ def properties():
 @login_required
 def settings():
     """Settings page for API configuration"""
-    current_user = get_current_user()
-    if not current_user:
-        session.clear()
-        return redirect(url_for('login'))
-    user_id = current_user['id']
-    
-    # Get current settings
-    akahu_app_token = get_setting('akahu_app_token', '')
-    akahu_user_token = get_setting('akahu_user_token', '')
-    email_recipient = get_setting('email_recipient', '')
-    
-    # Get configured accounts
-    with get_db() as conn:
-        accounts = conn.execute('''
-            SELECT * FROM akahu_accounts WHERE user_id = ? ORDER BY account_name
-        ''', (user_id,)).fetchall()
-    
-    return render_template('settings.html', 
-                         akahu_app_token=akahu_app_token,
-                         akahu_user_token=akahu_user_token,
-                         email_recipient=email_recipient,
-                         accounts=accounts,
-                         current_user=current_user)
+    try:
+        current_user = get_current_user()
+        if not current_user:
+            app.logger.warning('Settings accessed without valid user session')
+            session.clear()
+            return redirect(url_for('login'))
+        user_id = current_user['id']
+        app.logger.info(f'Settings page accessed by user {user_id}')
+        
+        # Get current settings
+        akahu_app_token = get_setting('akahu_app_token', '', user_id)
+        akahu_user_token = get_setting('akahu_user_token', '', user_id)
+        email_recipient = get_setting('email_recipient', '', user_id)
+        
+        # Get configured accounts
+        with get_db() as conn:
+            accounts = conn.execute('''
+                SELECT * FROM akahu_accounts WHERE user_id = ? ORDER BY account_name
+            ''', (user_id,)).fetchall()
+        
+        app.logger.info(f'Settings loaded successfully for user {user_id}')
+        return render_template('settings.html', 
+                             akahu_app_token=akahu_app_token,
+                             akahu_user_token=akahu_user_token,
+                             email_recipient=email_recipient,
+                             accounts=accounts,
+                             current_user=current_user)
+    except Exception as e:
+        app.logger.error(f'Error in settings route: {str(e)}')
+        return render_template('error.html', error_code=500, error_message='Internal server error in settings'), 500
 
 @app.route('/save_settings', methods=['POST'])
 @login_required
