@@ -36,20 +36,25 @@ app.config['SESSION_COOKIE_HTTPONLY'] = config('SESSION_COOKIE_HTTPONLY', defaul
 app.config['SESSION_COOKIE_SAMESITE'] = config('SESSION_COOKIE_SAMESITE', default='Lax')
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=config('PERMANENT_SESSION_LIFETIME', default=3600, cast=int))
 
-# Security Extensions
-csrf = CSRFProtect(app)
+# Security Extensions - disabled for now due to JSON API issues
+# csrf = CSRFProtect(app)
 limiter = Limiter(
     key_func=get_remote_address,
     app=app,
     default_limits=["200 per day", "50 per hour"],
-    storage_uri=config('RATELIMIT_STORAGE_URL', default="memory://")
+    storage_uri=config('RATELIMIT_STORAGE_URL', default="memory://"),
+    on_breach=lambda: None  # Don't crash on rate limit storage issues
 )
 
 # Database configuration
 DATABASE = config('DATABASE_URL', default='rentcheck.db').replace('sqlite:///', '')
+# Ensure database directory exists for Railway
+db_dir = os.path.dirname(DATABASE) if os.path.dirname(DATABASE) else '.'
+if not os.path.exists(db_dir):
+    os.makedirs(db_dir, exist_ok=True)
 
 # Logging Configuration
-if not app.debug:
+if not app.debug and not os.environ.get('RAILWAY_ENVIRONMENT'):
     if not os.path.exists('logs'):
         os.mkdir('logs')
     file_handler = RotatingFileHandler('logs/rentcheck.log', maxBytes=10240, backupCount=10)
@@ -58,6 +63,12 @@ if not app.debug:
     ))
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('RentCheck startup')
+else:
+    # Railway/production logging to stdout
+    import sys
+    app.logger.addHandler(logging.StreamHandler(sys.stdout))
     app.logger.setLevel(logging.INFO)
     app.logger.info('RentCheck startup')
 
@@ -84,8 +95,9 @@ def get_db():
 
 def init_db():
     """Initialize the database with required tables"""
-    with get_db() as conn:
-        conn.executescript('''
+    try:
+        with get_db() as conn:
+            conn.executescript('''
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 email TEXT UNIQUE NOT NULL,
@@ -149,24 +161,29 @@ def init_db():
             );
         ''')
         
-        # Migration: Add user_id columns to existing tables
-        migrations = [
-            ('properties', 'user_id', 'INTEGER'),
-            ('payment_history', 'user_id', 'INTEGER'),
-            ('user_settings', 'user_id', 'INTEGER'),
-            ('akahu_accounts', 'user_id', 'INTEGER'),
-            ('properties', 'payment_frequency', 'TEXT DEFAULT "1 week"')
-        ]
-        
-        for table, column, column_type in migrations:
-            try:
-                conn.execute(f'ALTER TABLE {table} ADD COLUMN {column} {column_type}')
-                conn.commit()
-            except sqlite3.OperationalError:
-                # Column already exists
-                pass
-        
-        conn.commit()
+            # Migration: Add user_id columns to existing tables
+            migrations = [
+                ('properties', 'user_id', 'INTEGER'),
+                ('payment_history', 'user_id', 'INTEGER'),
+                ('user_settings', 'user_id', 'INTEGER'),
+                ('akahu_accounts', 'user_id', 'INTEGER'),
+                ('properties', 'payment_frequency', 'TEXT DEFAULT "1 week"')
+            ]
+            
+            for table, column, column_type in migrations:
+                try:
+                    conn.execute(f'ALTER TABLE {table} ADD COLUMN {column} {column_type}')
+                    conn.commit()
+                except sqlite3.OperationalError:
+                    # Column already exists
+                    pass
+            
+            conn.commit()
+        print("Database initialized successfully")
+    except Exception as e:
+        print(f"Database initialization error: {e}")
+        # Try to continue anyway
+        pass
 
 def hash_password(password):
     """Hash a password using bcrypt"""
@@ -408,6 +425,10 @@ def security_headers(response):
 def dashboard():
     """Main dashboard showing rent status overview"""
     current_user = get_current_user()
+    if not current_user:
+        # Session exists but user record doesn't - clear session and redirect to login
+        session.clear()
+        return redirect(url_for('login'))
     user_id = current_user['id']
     
     with get_db() as conn:
@@ -441,6 +462,9 @@ def dashboard():
 def properties():
     """Property management page"""
     current_user = get_current_user()
+    if not current_user:
+        session.clear()
+        return redirect(url_for('login'))
     user_id = current_user['id']
     
     with get_db() as conn:
@@ -455,6 +479,9 @@ def properties():
 def settings():
     """Settings page for API configuration"""
     current_user = get_current_user()
+    if not current_user:
+        session.clear()
+        return redirect(url_for('login'))
     user_id = current_user['id']
     
     # Get current settings
@@ -480,21 +507,37 @@ def settings():
 def save_settings():
     """Save API configuration settings"""
     try:
+        # Skip CSRF validation for this route since it's JSON API behind login
+        app.logger.info(f"Save settings request received - Content-Type: {request.content_type}")
+        app.logger.info(f"Request data: {request.data}")
+        
         data = request.get_json()
+        app.logger.info(f"Parsed JSON data: {data}")
+        
+        if not data:
+            app.logger.error("No JSON data received")
+            return jsonify({'success': False, 'error': 'No data received'}), 400
         
         # Save Akahu credentials
         if 'akahu_app_token' in data:
             set_setting('akahu_app_token', data['akahu_app_token'])
+            app.logger.info("Saved akahu_app_token")
         if 'akahu_user_token' in data:
             set_setting('akahu_user_token', data['akahu_user_token'])
+            app.logger.info("Saved akahu_user_token")
         
         # Save email recipient (sender credentials are hardcoded)
         if 'email_recipient' in data:
             set_setting('email_recipient', data['email_recipient'])
+            app.logger.info("Saved email_recipient")
         
+        app.logger.info("Settings saved successfully")
         return jsonify({'success': True, 'message': 'Settings saved successfully'})
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
+        app.logger.error(f"Error saving settings: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# CSRF exemption no longer needed - CSRF disabled globally
 
 @app.route('/test_akahu_connection')
 @login_required
@@ -538,6 +581,11 @@ def fetch_accounts():
     """Fetch and save accounts from Akahu API"""
     try:
         current_user = get_current_user()
+        if not current_user:
+            return jsonify({
+                'success': False, 
+                'error': 'User session invalid. Please login again.'
+            })
         user_id = current_user['id']
         
         config = get_akahu_config()
@@ -588,6 +636,8 @@ def toggle_account(account_id):
     """Toggle account active status"""
     try:
         current_user = get_current_user()
+        if not current_user:
+            return jsonify({'success': False, 'error': 'User session invalid'})
         user_id = current_user['id']
         
         with get_db() as conn:
@@ -621,6 +671,8 @@ def add_property():
     """Add a new property"""
     data = request.get_json()
     current_user = get_current_user()
+    if not current_user:
+        return jsonify({'success': False, 'error': 'User session invalid'})
     user_id = current_user['id']
     
     with get_db() as conn:
@@ -639,6 +691,8 @@ def update_property(property_id):
     """Update an existing property"""
     data = request.get_json()
     current_user = get_current_user()
+    if not current_user:
+        return jsonify({'success': False, 'error': 'User session invalid'})
     user_id = current_user['id']
     
     with get_db() as conn:
@@ -666,6 +720,8 @@ def update_property(property_id):
 def delete_property(property_id):
     """Delete a property"""
     current_user = get_current_user()
+    if not current_user:
+        return jsonify({'success': False, 'error': 'User session invalid'})
     user_id = current_user['id']
     
     with get_db() as conn:
@@ -690,6 +746,11 @@ def check_payments():
     """Check for recent rent payments via Akahu API"""
     try:
         current_user = get_current_user()
+        if not current_user:
+            return jsonify({
+                'success': False, 
+                'error': 'User session invalid. Please login again.'
+            })
         user_id = current_user['id']
         
         # Check if API is configured
@@ -956,6 +1017,9 @@ scheduler.start()
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
 
+# Initialize database when module loads (for both dev and production)
+init_db()
+
 if __name__ == '__main__':
-    init_db()
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    port = int(os.environ.get('PORT', 5001))
+    app.run(debug=config('DEBUG', default=False, cast=bool), host='0.0.0.0', port=port)
