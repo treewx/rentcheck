@@ -97,7 +97,7 @@ def init_db():
     """Initialize the database with required tables"""
     try:
         with get_db() as conn:
-        conn.executescript('''
+            conn.executescript('''
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 email TEXT UNIQUE NOT NULL,
@@ -161,24 +161,24 @@ def init_db():
             );
         ''')
         
-        # Migration: Add user_id columns to existing tables
-        migrations = [
-            ('properties', 'user_id', 'INTEGER'),
-            ('payment_history', 'user_id', 'INTEGER'),
-            ('user_settings', 'user_id', 'INTEGER'),
-            ('akahu_accounts', 'user_id', 'INTEGER'),
-            ('properties', 'payment_frequency', 'TEXT DEFAULT "1 week"')
-        ]
-        
-        for table, column, column_type in migrations:
-            try:
-                conn.execute(f'ALTER TABLE {table} ADD COLUMN {column} {column_type}')
-                conn.commit()
-            except sqlite3.OperationalError:
-                # Column already exists
-                pass
-        
-        conn.commit()
+            # Migration: Add user_id columns to existing tables
+            migrations = [
+                ('properties', 'user_id', 'INTEGER'),
+                ('payment_history', 'user_id', 'INTEGER'),
+                ('user_settings', 'user_id', 'INTEGER'),
+                ('akahu_accounts', 'user_id', 'INTEGER'),
+                ('properties', 'payment_frequency', 'TEXT DEFAULT "1 week"')
+            ]
+            
+            for table, column, column_type in migrations:
+                try:
+                    conn.execute(f'ALTER TABLE {table} ADD COLUMN {column} {column_type}')
+                    conn.commit()
+                except sqlite3.OperationalError:
+                    # Column already exists
+                    pass
+            
+            conn.commit()
         print("Database initialized successfully")
     except Exception as e:
         print(f"Database initialization error: {e}")
