@@ -42,14 +42,19 @@ limiter = Limiter(
     key_func=get_remote_address,
     app=app,
     default_limits=["200 per day", "50 per hour"],
-    storage_uri=config('RATELIMIT_STORAGE_URL', default="memory://")
+    storage_uri=config('RATELIMIT_STORAGE_URL', default="memory://"),
+    on_breach=lambda: None  # Don't crash on rate limit storage issues
 )
 
 # Database configuration
 DATABASE = config('DATABASE_URL', default='rentcheck.db').replace('sqlite:///', '')
+# Ensure database directory exists for Railway
+db_dir = os.path.dirname(DATABASE) if os.path.dirname(DATABASE) else '.'
+if not os.path.exists(db_dir):
+    os.makedirs(db_dir, exist_ok=True)
 
 # Logging Configuration
-if not app.debug:
+if not app.debug and not os.environ.get('RAILWAY_ENVIRONMENT'):
     if not os.path.exists('logs'):
         os.mkdir('logs')
     file_handler = RotatingFileHandler('logs/rentcheck.log', maxBytes=10240, backupCount=10)
@@ -58,6 +63,12 @@ if not app.debug:
     ))
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('RentCheck startup')
+else:
+    # Railway/production logging to stdout
+    import sys
+    app.logger.addHandler(logging.StreamHandler(sys.stdout))
     app.logger.setLevel(logging.INFO)
     app.logger.info('RentCheck startup')
 
@@ -84,7 +95,8 @@ def get_db():
 
 def init_db():
     """Initialize the database with required tables"""
-    with get_db() as conn:
+    try:
+        with get_db() as conn:
         conn.executescript('''
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -167,6 +179,11 @@ def init_db():
                 pass
         
         conn.commit()
+        print("Database initialized successfully")
+    except Exception as e:
+        print(f"Database initialization error: {e}")
+        # Try to continue anyway
+        pass
 
 def hash_password(password):
     """Hash a password using bcrypt"""
@@ -956,6 +973,9 @@ scheduler.start()
 # Shut down the scheduler when exiting the app
 atexit.register(lambda: scheduler.shutdown())
 
+# Initialize database when module loads (for both dev and production)
+init_db()
+
 if __name__ == '__main__':
-    init_db()
-    app.run(debug=True, host='0.0.0.0', port=5001)
+    port = int(os.environ.get('PORT', 5001))
+    app.run(debug=config('DEBUG', default=False, cast=bool), host='0.0.0.0', port=port)
