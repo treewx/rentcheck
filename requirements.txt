@@ -1,0 +1,12 @@
+Flask==2.3.3
+requests==2.31.0
+python-dotenv==1.0.0
+APScheduler==3.10.4
+werkzeug==2.3.7
+bcrypt==4.0.1
+Flask-WTF==1.1.1
+WTForms==3.0.1
+Flask-Limiter==3.5.0
+python-decouple==3.8
+email-validator==2.0.0
+gunicorn==21.2.0
