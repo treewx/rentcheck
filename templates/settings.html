@@ -12,52 +12,55 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(180deg, #A5B4FC 0%, #6366F1 30%, #4F46E5 70%, #1E3A8A 100%);
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
         .header {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
             text-align: center;
         }
 
         .header h1 {
-            color: #333;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            color: #1E293B;
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
 
         .header p {
-            color: #666;
-            font-size: 1.1rem;
+            color: #64748B;
+            font-size: 1rem;
+            line-height: 1.5;
         }
 
         .card {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            margin-bottom: 24px;
         }
 
         .card h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
+            color: #1E293B;
+            margin-bottom: 24px;
+            font-size: 1.25rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .form-grid {
@@ -74,23 +77,27 @@
 
         .form-group label {
             margin-bottom: 8px;
-            font-weight: bold;
-            color: #333;
+            font-weight: 500;
+            color: #374151;
+            font-size: 0.9rem;
         }
 
         .form-group input,
         .form-group select {
-            padding: 12px;
-            border: 2px solid #e9ecef;
+            padding: 12px 16px;
+            border: 2px solid #E5E7EB;
             border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            background: white;
+            width: 100%;
         }
 
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #FF8C42;
+            box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.1);
         }
 
         .form-group small {
@@ -100,39 +107,64 @@
         }
 
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #FF8C42;
             color: white;
             border: none;
             padding: 12px 24px;
             border-radius: 25px;
             cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
             text-decoration: none;
-            display: inline-block;
-            margin: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px 8px 4px 0;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: #FF7A28;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            background: #10B981;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+            background: #EF4444;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
         .btn-secondary {
-            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            background: #6B7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4B5563;
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
         }
 
         .btn-warning {
-            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
-            color: #333;
+            background: #FF8C42;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #FF7A28;
+            box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
         }
 
         .nav-buttons {
@@ -145,16 +177,16 @@
         .connection-status {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            gap: 12px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
         }
 
         .status-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: #DCFCE7;
+            color: #166534;
+            border: 1px solid #BBF7D0;
         }
 
         .status-error {
@@ -231,25 +263,27 @@
         }
 
         .info-box {
-            background: #e7f3ff;
-            border: 1px solid #b8daff;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
+            background: #F1F5F9;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
         }
 
         .info-box h4 {
-            color: #004085;
-            margin-bottom: 10px;
+            color: #1E293B;
+            margin-bottom: 12px;
+            font-weight: 600;
         }
 
         .info-box p {
-            color: #004085;
+            color: #475569;
             margin-bottom: 8px;
+            line-height: 1.5;
         }
 
         .info-box a {
-            color: #0056b3;
+            color: #3B82F6;
             text-decoration: underline;
         }
 
@@ -325,18 +359,18 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>⚙️ RentCheck Settings</h1>
+            <h1>RentCheck - Settings</h1>
             <p>Configure your Akahu API and bank account integration</p>
         </div>
 
         <div class="nav-buttons">
             <a href="/" class="btn btn-secondary">← Back to Dashboard</a>
-            <a href="/properties" class="btn btn-secondary">🏠 Properties</a>
+            <a href="/properties" class="btn btn-warning">→ Properties</a>
         </div>
 
         <!-- API Configuration -->
         <div class="card">
-            <h2>🔐 Akahu API Configuration</h2>
+            <h2>✅ Akahu API Configuration</h2>
             <p style="color: #666; margin-bottom: 20px; font-size: 1rem;">
                 <a href="https://akahu.nz/consumer" target="_blank" style="color: #667eea; text-decoration: none; font-weight: bold;">Akahu</a> 
                 is an intermediary that securely connects your New Zealand bank accounts to authorized applications like RentCheck.
@@ -388,19 +422,19 @@
                 </div>
                 
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <button type="submit" class="btn btn-success">💾 Save Settings</button>
-                    <button type="button" onclick="testConnection()" class="btn btn-warning" id="testBtn">🔍 Test Connection</button>
+                    <button type="submit" class="btn btn-success">→ Save Settings</button>
+                    <button type="button" onclick="testConnection()" class="btn btn-warning" id="testBtn">Test Connection</button>
                 </div>
             </form>
         </div>
 
         <!-- Bank Accounts -->
         <div class="card">
-            <h2>🏦 Bank Accounts</h2>
+            <h2>Bank Accounts</h2>
             
             <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                <button onclick="fetchAccounts()" class="btn btn-success" id="fetchBtn">📥 Fetch My Accounts</button>
-                <button onclick="refreshAccountList()" class="btn">🔄 Refresh List</button>
+                <button onclick="fetchAccounts()" class="btn btn-success" id="fetchBtn">Fetch My Accounts</button>
+                <button onclick="refreshAccountList()" class="btn">Refresh List</button>
             </div>
 
             <div id="accountsList" class="account-list">
@@ -431,7 +465,7 @@
 
         <!-- Email Settings -->
         <div class="card">
-            <h2>📧 Email Notifications</h2>
+            <h2>Email Notifications</h2>
             
             <div class="info-box">
                 <h4>Email Notification Setup:</h4>
@@ -451,13 +485,13 @@
                 </div>
                 
                 <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
-                    <button type="submit" class="btn btn-success">💾 Save Email Settings</button>
-                    <button type="button" onclick="sendTestEmail()" class="btn btn-warning" id="testEmailBtn">📤 Send Test Email</button>
+                    <button type="submit" class="btn btn-success">→ Save Email Settings</button>
+                    <button type="button" onclick="sendTestEmail()" class="btn btn-warning" id="testEmailBtn">Send Test Email</button>
                 </div>
             </form>
             
             <div style="display: flex; gap: 15px;">
-                <a href="/manual_check_overdue" class="btn" target="_blank">🔍 Manual Overdue Check</a>
+                <a href="/manual_check_overdue" class="btn" target="_blank">Manual Overdue Check</a>
             </div>
         </div>
     </div>
@@ -466,7 +500,7 @@
     <div id="tokenGuideModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeTokenGuide()">&times;</span>
-            <h2>🔍 How to Find Your Akahu Tokens</h2>
+            <h2>How to Find Your Akahu Tokens</h2>
             
             <div class="guide-step">
                 <h3>Step 1: Go to Akahu Personal Apps</h3>
@@ -521,7 +555,7 @@
             const testBtn = document.getElementById('testBtn');
             const statusDiv = document.getElementById('connectionStatus');
             
-            testBtn.textContent = '⏳ Testing...';
+            testBtn.textContent = 'Testing...';
             testBtn.disabled = true;
             
             try {
@@ -531,7 +565,7 @@
                 if (data.success) {
                     statusDiv.innerHTML = `
                         <div class="connection-status status-success">
-                            <span>✅</span>
+                            <span>✓</span>
                             <div>
                                 <strong>Connection Successful!</strong>
                                 <p>${data.message}</p>
@@ -541,7 +575,7 @@
                 } else {
                     statusDiv.innerHTML = `
                         <div class="connection-status status-error">
-                            <span>❌</span>
+                            <span>✗</span>
                             <div>
                                 <strong>Connection Failed</strong>
                                 <p>${data.error}</p>
@@ -560,7 +594,7 @@
                     </div>
                 `;
             } finally {
-                testBtn.textContent = '🔍 Test Connection';
+                testBtn.textContent = 'Test Connection';
                 testBtn.disabled = false;
             }
         }
@@ -569,7 +603,7 @@
             const fetchBtn = document.getElementById('fetchBtn');
             const originalText = fetchBtn.textContent;
             
-            fetchBtn.textContent = '⏳ Fetching...';
+            fetchBtn.textContent = 'Fetching...';
             fetchBtn.disabled = true;
             
             try {
@@ -635,14 +669,14 @@
                 fetchActualToken(fieldId).then(actualValue => {
                     field.type = 'text';
                     field.value = actualValue;
-                    button.textContent = '🙈';
+                    button.textContent = 'Hide';
                     field.focus();
                     field.select();
                 });
             } else {
                 // Hide token
                 field.type = 'password';
-                button.textContent = '👁️';
+                button.textContent = 'Show';
                 // Re-mask the token
                 location.reload();
             }
@@ -730,7 +764,7 @@
             const testEmailBtn = document.getElementById('testEmailBtn');
             const originalText = testEmailBtn.textContent;
             
-            testEmailBtn.textContent = '⏳ Sending...';
+            testEmailBtn.textContent = 'Sending...';
             testEmailBtn.disabled = true;
             
             try {

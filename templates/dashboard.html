@@ -12,8 +12,8 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(180deg, #A5B4FC 0%, #6366F1 30%, #4F46E5 70%, #1E3A8A 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -72,22 +72,24 @@
 
         .header {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
             text-align: center;
         }
 
         .header h1 {
-            color: #333;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            color: #1E293B;
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
 
         .header p {
-            color: #666;
-            font-size: 1.1rem;
+            color: #64748B;
+            font-size: 1rem;
+            line-height: 1.5;
         }
 
         .stats-grid {
@@ -99,15 +101,10 @@
 
         .stat-card {
             background: white;
-            border-radius: 15px;
-            padding: 25px;
+            border-radius: 16px;
+            padding: 24px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
         }
 
         .stat-card .icon {
@@ -135,9 +132,9 @@
 
         .card {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
         }
 
         .card h2 {
@@ -150,29 +147,53 @@
         }
 
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #FF8C42;
             color: white;
             border: none;
             padding: 12px 24px;
             border-radius: 25px;
             cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: #FF7A28;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            background: #10B981;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+            background: #EF4444;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6B7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4B5563;
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
         }
 
         .property-list {
