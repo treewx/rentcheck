@@ -12,63 +12,59 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
-            color: #2c3e50;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
         .header {
             background: white;
-            border: 1px solid #e1e8ed;
-            border-radius: 6px;
-            padding: 32px;
-            margin-bottom: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
         }
 
         .header h1 {
-            color: #2c3e50;
-            font-size: 1.875rem;
-            font-weight: 600;
-            margin-bottom: 8px;
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
         }
 
         .header p {
-            color: #64748b;
-            font-size: 1rem;
-            line-height: 1.5;
+            color: #666;
+            font-size: 1.1rem;
         }
 
         .card {
             background: white;
-            border: 1px solid #e1e8ed;
-            border-radius: 6px;
-            padding: 32px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 24px;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
 
         .card h2 {
-            color: #2c3e50;
+            color: #333;
             margin-bottom: 20px;
-            font-size: 1.25rem;
-            font-weight: 600;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #f1f5f9;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin-bottom: 24px;
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
         .form-group {
@@ -78,139 +74,111 @@
 
         .form-group label {
             margin-bottom: 8px;
-            font-weight: 600;
-            color: #374151;
-            font-size: 0.9rem;
+            font-weight: bold;
+            color: #333;
         }
 
         .form-group input,
         .form-group select {
-            padding: 12px 16px;
-            border: 2px solid #d1d5db;
-            border-radius: 4px;
-            font-size: 0.95rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            background-color: white;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
         }
 
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            border-color: #667eea;
         }
 
         .form-group small {
-            margin-top: 6px;
-            color: #6b7280;
-            font-size: 0.8rem;
-            line-height: 1.4;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.85rem;
         }
 
         .btn {
-            background-color: #3b82f6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 4px;
+            padding: 12px 24px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: background-color 0.2s ease;
+            font-size: 1rem;
+            transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
-            margin: 4px 8px 4px 0;
-            text-align: center;
+            margin: 5px;
         }
 
         .btn:hover {
-            background-color: #2563eb;
-        }
-
-        .btn:disabled {
-            background-color: #9ca3af;
-            cursor: not-allowed;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         .btn-success {
-            background-color: #059669;
-        }
-
-        .btn-success:hover {
-            background-color: #047857;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
         }
 
         .btn-danger {
-            background-color: #dc2626;
-        }
-
-        .btn-danger:hover {
-            background-color: #b91c1c;
+            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
         }
 
         .btn-secondary {
-            background-color: #6b7280;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background-color: #4b5563;
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
         }
 
         .btn-warning {
-            background-color: #d97706;
-            color: white;
-        }
-
-        .btn-warning:hover {
-            background-color: #b45309;
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            color: #333;
         }
 
         .nav-buttons {
             display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
         }
 
         .connection-status {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 16px;
-            border-radius: 4px;
+            gap: 10px;
+            padding: 15px;
+            border-radius: 8px;
             margin-bottom: 20px;
-            border: 1px solid;
         }
 
         .status-success {
-            background-color: #f0fdf4;
-            color: #166534;
-            border-color: #bbf7d0;
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
 
         .status-error {
-            background-color: #fef2f2;
-            color: #991b1b;
-            border-color: #fecaca;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
 
         .status-warning {
-            background-color: #fffbeb;
-            color: #92400e;
-            border-color: #fed7aa;
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
         }
 
         .account-list {
             display: grid;
-            gap: 16px;
+            gap: 15px;
         }
 
         .account-item {
-            background-color: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 4px;
+            background: #f8f9fa;
+            border-radius: 10px;
             padding: 20px;
-            border-left: 4px solid #3b82f6;
+            border-left: 5px solid #667eea;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -218,46 +186,43 @@
 
         .account-item.inactive {
             opacity: 0.6;
-            border-left-color: #9ca3af;
+            border-left-color: #6c757d;
         }
 
         .account-info h4 {
-            color: #374151;
-            margin-bottom: 4px;
-            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
         }
 
         .account-info p {
-            color: #6b7280;
+            color: #666;
             font-size: 0.9rem;
-            margin-bottom: 2px;
         }
 
         .account-actions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
         }
 
         .account-actions .btn {
             padding: 8px 16px;
-            font-size: 0.85rem;
-            margin: 0;
+            font-size: 0.9rem;
         }
 
         .loading {
             text-align: center;
-            padding: 24px;
-            color: #6b7280;
+            padding: 20px;
+            color: #666;
         }
 
         .spinner {
-            border: 3px solid #f3f4f6;
-            border-top: 3px solid #3b82f6;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 30px;
+            height: 30px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 12px;
+            margin: 0 auto 10px;
         }
 
         @keyframes spin {
@@ -266,29 +231,25 @@
         }
 
         .info-box {
-            background-color: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-radius: 4px;
-            padding: 16px;
+            background: #e7f3ff;
+            border: 1px solid #b8daff;
+            border-radius: 8px;
+            padding: 15px;
             margin-bottom: 20px;
         }
 
         .info-box h4 {
-            color: #1e40af;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 0.95rem;
+            color: #004085;
+            margin-bottom: 10px;
         }
 
         .info-box p {
-            color: #1e40af;
-            margin-bottom: 6px;
-            font-size: 0.9rem;
-            line-height: 1.4;
+            color: #004085;
+            margin-bottom: 8px;
         }
 
         .info-box a {
-            color: #1d4ed8;
+            color: #0056b3;
             text-decoration: underline;
         }
 
@@ -300,26 +261,25 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(0, 0, 0, 0.8);
         }
 
         .modal-content {
             background-color: white;
             margin: 5% auto;
-            padding: 32px;
-            border-radius: 6px;
+            padding: 30px;
+            border-radius: 15px;
             width: 90%;
             max-width: 800px;
             max-height: 80vh;
             overflow-y: auto;
             position: relative;
-            border: 1px solid #e1e8ed;
         }
 
         .close {
-            color: #9ca3af;
+            color: #aaa;
             float: right;
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
             position: absolute;
             right: 20px;
@@ -328,7 +288,7 @@
 
         .close:hover,
         .close:focus {
-            color: #374151;
+            color: #000;
             text-decoration: none;
             cursor: pointer;
         }
@@ -336,24 +296,17 @@
         .guide-image {
             width: 100%;
             max-width: 600px;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-            margin: 12px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 10px 0;
         }
 
         .guide-step {
             margin: 20px 0;
-            padding: 16px;
-            background-color: #f9fafb;
-            border-left: 4px solid #3b82f6;
-            border-radius: 4px;
-        }
-
-        .guide-step h3 {
-            color: #374151;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 8px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
         }
 
         @media (max-width: 768px) {
@@ -363,12 +316,8 @@
             
             .account-item {
                 flex-direction: column;
-                gap: 16px;
+                gap: 15px;
                 text-align: center;
-            }
-
-            .nav-buttons {
-                flex-direction: column;
             }
         }
     </style>
@@ -376,18 +325,18 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Settings</h1>
+            <h1>⚙️ RentCheck Settings</h1>
             <p>Configure your Akahu API and bank account integration</p>
         </div>
 
         <div class="nav-buttons">
             <a href="/" class="btn btn-secondary">← Back to Dashboard</a>
-            <a href="/properties" class="btn btn-secondary">Properties</a>
+            <a href="/properties" class="btn btn-secondary">🏠 Properties</a>
         </div>
 
         <!-- API Configuration -->
         <div class="card">
-            <h2>Akahu API Configuration</h2>
+            <h2>🔐 Akahu API Configuration</h2>
             <p style="color: #666; margin-bottom: 20px; font-size: 1rem;">
                 <a href="https://akahu.nz/consumer" target="_blank" style="color: #667eea; text-decoration: none; font-weight: bold;">Akahu</a> 
                 is an intermediary that securely connects your New Zealand bank accounts to authorized applications like RentCheck.
@@ -414,11 +363,11 @@
                             {% if has_app_token %}
                             <button type="button" onclick="toggleTokenVisibility('akahuAppToken')" 
                                     style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 14px;">
-                                Show
+                                👁️
                             </button>
                             {% endif %}
                         </div>
-                        <small>Your Akahu application token {% if has_app_token %}- Click Show to reveal/edit{% endif %}</small>
+                        <small>Your Akahu application token {% if has_app_token %}- Click 👁️ to reveal/edit{% endif %}</small>
                     </div>
                     
                     <div class="form-group">
@@ -430,28 +379,28 @@
                             {% if has_user_token %}
                             <button type="button" onclick="toggleTokenVisibility('akahuUserToken')" 
                                     style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 14px;">
-                                Show
+                                👁️
                             </button>
                             {% endif %}
                         </div>
-                        <small>Your Akahu user token {% if has_user_token %}- Click Show to reveal/edit{% endif %}</small>
+                        <small>Your Akahu user token {% if has_user_token %}- Click 👁️ to reveal/edit{% endif %}</small>
                     </div>
                 </div>
                 
                 <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                    <button type="submit" class="btn btn-success">Save Settings</button>
-                    <button type="button" onclick="testConnection()" class="btn btn-warning" id="testBtn">Test Connection</button>
+                    <button type="submit" class="btn btn-success">💾 Save Settings</button>
+                    <button type="button" onclick="testConnection()" class="btn btn-warning" id="testBtn">🔍 Test Connection</button>
                 </div>
             </form>
         </div>
 
         <!-- Bank Accounts -->
         <div class="card">
-            <h2>Bank Accounts</h2>
+            <h2>🏦 Bank Accounts</h2>
             
             <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;">
-                <button onclick="fetchAccounts()" class="btn btn-success" id="fetchBtn">Fetch My Accounts</button>
-                <button onclick="refreshAccountList()" class="btn">Refresh List</button>
+                <button onclick="fetchAccounts()" class="btn btn-success" id="fetchBtn">📥 Fetch My Accounts</button>
+                <button onclick="refreshAccountList()" class="btn">🔄 Refresh List</button>
             </div>
 
             <div id="accountsList" class="account-list">
@@ -466,7 +415,7 @@
                         <div class="account-actions">
                             <button onclick="toggleAccount('{{ account.account_id }}')" 
                                     class="btn {% if account.is_active %}btn-danger{% else %}btn-success{% endif %}">
-                                {% if account.is_active %}Deactivate{% else %}Activate{% endif %}
+                                {% if account.is_active %}❌ Deactivate{% else %}✅ Activate{% endif %}
                             </button>
                         </div>
                     </div>
@@ -482,7 +431,7 @@
 
         <!-- Email Settings -->
         <div class="card">
-            <h2>Email Notifications</h2>
+            <h2>📧 Email Notifications</h2>
             
             <div class="info-box">
                 <h4>Email Notification Setup:</h4>
@@ -502,13 +451,13 @@
                 </div>
                 
                 <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
-                    <button type="submit" class="btn btn-success">Save Email Settings</button>
-                    <button type="button" onclick="sendTestEmail()" class="btn btn-warning" id="testEmailBtn">Send Test Email</button>
+                    <button type="submit" class="btn btn-success">💾 Save Email Settings</button>
+                    <button type="button" onclick="sendTestEmail()" class="btn btn-warning" id="testEmailBtn">📤 Send Test Email</button>
                 </div>
             </form>
             
             <div style="display: flex; gap: 15px;">
-                <a href="/manual_check_overdue" class="btn" target="_blank">Manual Overdue Check</a>
+                <a href="/manual_check_overdue" class="btn" target="_blank">🔍 Manual Overdue Check</a>
             </div>
         </div>
     </div>
@@ -517,7 +466,7 @@
     <div id="tokenGuideModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeTokenGuide()">&times;</span>
-            <h2>How to Find Your Akahu Tokens</h2>
+            <h2>🔍 How to Find Your Akahu Tokens</h2>
             
             <div class="guide-step">
                 <h3>Step 1: Go to Akahu Personal Apps</h3>
@@ -555,7 +504,7 @@
                 <h3>Step 4: Copy the Tokens</h3>
                 <p>Click the copy button next to each token and paste them into the RentCheck settings form below.</p>
                 <p style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 10px;">
-                    <strong>Security Note:</strong> These tokens give access to your bank data. Keep them secure and don't share them with anyone.
+                    <strong>⚠️ Security Note:</strong> These tokens give access to your bank data. Keep them secure and don't share them with anyone.
                 </p>
             </div>
 
@@ -572,7 +521,7 @@
             const testBtn = document.getElementById('testBtn');
             const statusDiv = document.getElementById('connectionStatus');
             
-            testBtn.textContent = 'Testing...';
+            testBtn.textContent = '⏳ Testing...';
             testBtn.disabled = true;
             
             try {
@@ -582,7 +531,7 @@
                 if (data.success) {
                     statusDiv.innerHTML = `
                         <div class="connection-status status-success">
-                            <span>[SUCCESS]</span>
+                            <span>✅</span>
                             <div>
                                 <strong>Connection Successful!</strong>
                                 <p>${data.message}</p>
@@ -592,7 +541,7 @@
                 } else {
                     statusDiv.innerHTML = `
                         <div class="connection-status status-error">
-                            <span>[ERROR]</span>
+                            <span>❌</span>
                             <div>
                                 <strong>Connection Failed</strong>
                                 <p>${data.error}</p>
@@ -611,7 +560,7 @@
                     </div>
                 `;
             } finally {
-                testBtn.textContent = 'Test Connection';
+                testBtn.textContent = '🔍 Test Connection';
                 testBtn.disabled = false;
             }
         }
@@ -620,7 +569,7 @@
             const fetchBtn = document.getElementById('fetchBtn');
             const originalText = fetchBtn.textContent;
             
-            fetchBtn.textContent = 'Fetching...';
+            fetchBtn.textContent = '⏳ Fetching...';
             fetchBtn.disabled = true;
             
             try {
@@ -686,14 +635,14 @@
                 fetchActualToken(fieldId).then(actualValue => {
                     field.type = 'text';
                     field.value = actualValue;
-                    button.textContent = 'Hide';
+                    button.textContent = '🙈';
                     field.focus();
                     field.select();
                 });
             } else {
                 // Hide token
                 field.type = 'password';
-                button.textContent = 'Show';
+                button.textContent = '👁️';
                 // Re-mask the token
                 location.reload();
             }
@@ -781,7 +730,7 @@
             const testEmailBtn = document.getElementById('testEmailBtn');
             const originalText = testEmailBtn.textContent;
             
-            testEmailBtn.textContent = 'Sending...';
+            testEmailBtn.textContent = '⏳ Sending...';
             testEmailBtn.disabled = true;
             
             try {
