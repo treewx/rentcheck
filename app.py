@@ -166,6 +166,16 @@ def init_db():
                 FOREIGN KEY (user_id) REFERENCES users (id),
                 UNIQUE(user_id, account_id)
             );
+            
+            CREATE TABLE IF NOT EXISTS password_reset_tokens (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
+                token TEXT NOT NULL UNIQUE,
+                expires_at TIMESTAMP NOT NULL,
+                used BOOLEAN DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (id)
+            );
         ''')
         
             # Migration: Add user_id columns to existing tables
@@ -312,6 +322,13 @@ class PropertyForm(FlaskForm):
     ], validators=[DataRequired()])
     payment_keyword = StringField('Payment Keyword', validators=[DataRequired(), Length(min=2, max=50)])
 
+class ForgotPasswordForm(FlaskForm):
+    email = EmailField('Email', validators=[DataRequired(), Email()])
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('New Password', validators=[DataRequired(), Length(min=8, max=128)])
+    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), Length(min=8, max=128)])
+
 def validate_email_address(email):
     """Validate email address format"""
     try:
@@ -319,6 +336,62 @@ def validate_email_address(email):
         return True
     except EmailNotValidError:
         return False
+
+def generate_reset_token():
+    """Generate a secure random token for password reset"""
+    return secrets.token_urlsafe(32)
+
+def create_password_reset_token(user_id):
+    """Create a new password reset token for a user"""
+    token = generate_reset_token()
+    expires_at = datetime.utcnow() + timedelta(hours=1)  # Token expires in 1 hour
+    
+    with get_db() as conn:
+        # Invalidate any existing tokens for this user
+        conn.execute(
+            'UPDATE password_reset_tokens SET used = 1 WHERE user_id = ? AND used = 0',
+            (user_id,)
+        )
+        
+        # Create new token
+        conn.execute('''
+            INSERT INTO password_reset_tokens (user_id, token, expires_at)
+            VALUES (?, ?, ?)
+        ''', (user_id, token, expires_at))
+        conn.commit()
+    
+    return token
+
+def validate_reset_token(token):
+    """Validate a password reset token and return user_id if valid"""
+    try:
+        with get_db() as conn:
+            result = conn.execute('''
+                SELECT user_id, expires_at FROM password_reset_tokens 
+                WHERE token = ? AND used = 0
+            ''', (token,)).fetchone()
+            
+            if not result:
+                return None
+            
+            # Check if token has expired
+            expires_at = datetime.fromisoformat(result['expires_at'].replace('Z', '+00:00'))
+            if datetime.utcnow() > expires_at.replace(tzinfo=None):
+                return None
+            
+            return result['user_id']
+    except Exception as e:
+        app.logger.error(f'Error validating reset token: {str(e)}')
+        return None
+
+def mark_token_as_used(token):
+    """Mark a password reset token as used"""
+    with get_db() as conn:
+        conn.execute(
+            'UPDATE password_reset_tokens SET used = 1 WHERE token = ?',
+            (token,)
+        )
+        conn.commit()
 
 @app.route('/login', methods=['GET', 'POST'])
 @limiter.limit("10 per minute")
@@ -409,6 +482,92 @@ def logout():
     session.clear()
     flash('You have been logged out', 'info')
     return redirect(url_for('login'))
+
+@app.route('/forgot_password', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
+def forgot_password():
+    """Forgot password - send reset email"""
+    form = ForgotPasswordForm()
+    
+    if form.validate_on_submit():
+        email = form.email.data.lower().strip()
+        
+        # Additional email validation
+        if not validate_email_address(email):
+            flash('Invalid email format', 'error')
+            return render_template('forgot_password.html', form=form)
+        
+        with get_db() as conn:
+            user = conn.execute(
+                'SELECT * FROM users WHERE email = ?', (email,)
+            ).fetchone()
+            
+            if user:
+                # Generate reset token
+                token = create_password_reset_token(user['id'])
+                
+                # Send reset email
+                reset_url = url_for('reset_password', token=token, _external=True)
+                success = send_password_reset_email(email, user['first_name'], reset_url)
+                
+                if success:
+                    app.logger.info(f'Password reset email sent to {email}')
+                    flash('Password reset email sent! Check your inbox.', 'success')
+                else:
+                    app.logger.error(f'Failed to send password reset email to {email}')
+                    flash('Error sending email. Please try again later.', 'error')
+            else:
+                # Don't reveal whether email exists or not for security
+                app.logger.warning(f'Password reset attempted for non-existent email: {email}')
+                flash('If the email exists, a password reset link has been sent.', 'info')
+        
+        return redirect(url_for('login'))
+    
+    return render_template('forgot_password.html', form=form)
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+@limiter.limit("10 per minute")
+def reset_password(token):
+    """Reset password with valid token"""
+    # Validate token
+    user_id = validate_reset_token(token)
+    if not user_id:
+        flash('Invalid or expired password reset link', 'error')
+        return redirect(url_for('forgot_password'))
+    
+    form = ResetPasswordForm()
+    
+    if form.validate_on_submit():
+        password = form.password.data
+        confirm_password = form.confirm_password.data
+        
+        # Password confirmation validation
+        if password != confirm_password:
+            flash('Passwords do not match', 'error')
+            return render_template('reset_password.html', form=form, token=token)
+        
+        # Password strength validation
+        if len(password) < 8:
+            flash('Password must be at least 8 characters long', 'error')
+            return render_template('reset_password.html', form=form, token=token)
+        
+        # Update password
+        with get_db() as conn:
+            password_hash = hash_password(password)
+            conn.execute(
+                'UPDATE users SET password_hash = ? WHERE id = ?',
+                (password_hash, user_id)
+            )
+            conn.commit()
+        
+        # Mark token as used
+        mark_token_as_used(token)
+        
+        app.logger.info(f'Password reset completed for user {user_id}')
+        flash('Password reset successful! Please login with your new password.', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('reset_password.html', form=form, token=token)
 
 # Error Handlers
 @app.errorhandler(404)
@@ -968,8 +1127,58 @@ def send_email_notification(subject, message):
         print(f"[EMAIL ERROR] Failed to send notification: {e}")
         return False
 
+def send_password_reset_email(recipient_email, first_name, reset_url):
+    """Send password reset email"""
+    try:
+        # Use environment variables for sender credentials directly for password reset
+        if not EMAIL_CONFIG['sender_email'] or not EMAIL_CONFIG['sender_password']:
+            print("[EMAIL ERROR] Email credentials not configured in environment variables.")
+            return False
+        
+        subject = "🔐 RentCheck Password Reset Request"
+        
+        message = f"""Hello {first_name},
+
+We received a request to reset your password for your RentCheck account.
+
+Click the link below to reset your password:
+{reset_url}
+
+This link will expire in 1 hour for security reasons.
+
+If you did not request a password reset, please ignore this email and your password will remain unchanged.
+
+For security reasons, please do not share this link with anyone.
+
+Best regards,
+The RentCheck Team
+
+---
+If you're having trouble clicking the link, copy and paste it into your web browser:
+{reset_url}
+"""
+        
+        msg = MIMEMultipart()
+        msg['From'] = EMAIL_CONFIG['sender_email']
+        msg['To'] = recipient_email
+        msg['Subject'] = subject
+        
+        msg.attach(MIMEText(message, 'plain'))
+        
+        server = smtplib.SMTP(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port'])
+        server.starttls()
+        server.login(EMAIL_CONFIG['sender_email'], EMAIL_CONFIG['sender_password'])
+        server.sendmail(EMAIL_CONFIG['sender_email'], recipient_email, msg.as_string())
+        server.quit()
+        
+        print(f"[EMAIL] Password reset email sent to: {recipient_email}")
+        return True
+    except Exception as e:
+        print(f"[EMAIL ERROR] Failed to send password reset email: {e}")
+        return False
+
 def check_overdue_payments():
-    """Check for overdue rent payments and send notifications"""
+    """Check for rent payments on due days and send comprehensive daily reports"""
     try:
         with get_db() as conn:
             properties = conn.execute('SELECT * FROM properties').fetchall()
@@ -983,31 +1192,88 @@ def check_overdue_payments():
         # Get transactions for checking
         transactions = get_akahu_transactions()
         
+        properties_due_today = []
+        
+        # Find all properties with rent due today
+        for prop in properties:
+            if prop['due_day'] == current_day:
+                properties_due_today.append(prop)
+        
+        # If no properties are due today, don't send any emails
+        if not properties_due_today:
+            print(f"[SCHEDULER] No rent payments due on {current_day}")
+            return
+        
+        # Check payment status for each property due today
+        paid_properties = []
         overdue_properties = []
         
-        for prop in properties:
-            # Check if rent is due today
-            if prop['due_day'] == current_day:
-                result = check_property_payment(prop, transactions)
-                if not result['payment_found']:
-                    overdue_properties.append(prop)
+        for prop in properties_due_today:
+            result = check_property_payment(prop, transactions)
+            if result['payment_found']:
+                paid_properties.append({
+                    'property': prop,
+                    'result': result
+                })
+            else:
+                overdue_properties.append({
+                    'property': prop,
+                    'result': result
+                })
         
-        # Send notification if there are overdue payments
-        if overdue_properties:
-            subject = f"🚨 Rent Alert: {len(overdue_properties)} Overdue Payment(s)"
-            message = f"The following properties have overdue rent payments as of {datetime.now().strftime('%Y-%m-%d')}:\n\n"
-            
-            for prop in overdue_properties:
-                message += f"• {prop['property_name']} - {prop['tenant_name']}: ${prop['rent_amount']}\n"
-            
-            message += f"\nPlease follow up with tenants or check your bank statements.\n\nRentCheck Dashboard: http://localhost:5001"
-            
-            send_email_notification(subject, message)
+        # Send comprehensive daily report
+        total_due = len(properties_due_today)
+        total_paid = len(paid_properties)
+        total_overdue = len(overdue_properties)
+        
+        # Determine email subject based on payment status
+        if total_overdue == 0:
+            subject = f"✅ Daily Rent Report - All {total_paid} Payment(s) Received"
         else:
-            print("[SCHEDULER] No overdue payments found")
+            subject = f"📊 Daily Rent Report - {total_paid}/{total_due} Payment(s) Received"
+        
+        # Build comprehensive message
+        current_date = datetime.now().strftime('%Y-%m-%d')
+        message = f"Daily Rent Report for {current_date}\n"
+        message += f"Properties with rent due today ({current_day}): {total_due}\n\n"
+        
+        # Add successful payments section
+        if paid_properties:
+            message += "✅ PAYMENTS RECEIVED:\n"
+            for item in paid_properties:
+                prop = item['property']
+                result = item['result']
+                status = "On Time" if result['amount'] >= prop['rent_amount'] else "Partial"
+                message += f"• {prop['property_name']} - {prop['tenant_name']}: ${result['amount']:.2f} ({status})\n"
+            message += "\n"
+        
+        # Add overdue payments section
+        if overdue_properties:
+            message += "❌ OUTSTANDING PAYMENTS:\n"
+            for item in overdue_properties:
+                prop = item['property']
+                message += f"• {prop['property_name']} - {prop['tenant_name']}: ${prop['rent_amount']:.2f} (Missing)\n"
+            message += "\n"
+        
+        # Add summary
+        message += f"📈 SUMMARY:\n"
+        message += f"• Total Due Today: {total_due}\n"
+        message += f"• Payments Received: {total_paid}\n"
+        message += f"• Outstanding: {total_overdue}\n"
+        
+        if total_overdue > 0:
+            message += f"\n⚠️  Please follow up with tenants for outstanding payments.\n"
+        else:
+            message += f"\n🎉 All rent payments received on time!\n"
+        
+        message += f"\nRentCheck Dashboard: http://localhost:5001"
+        
+        # Send the daily report
+        send_email_notification(subject, message)
+        print(f"[SCHEDULER] Daily rent report sent: {total_paid}/{total_due} payments received")
             
     except Exception as e:
-        print(f"[SCHEDULER ERROR] Error checking overdue payments: {e}")
+        print(f"[SCHEDULER ERROR] Error checking rent payments: {e}")
 
 @app.route('/send_test_email')
 def send_test_email():
