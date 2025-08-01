@@ -12,10 +12,11 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f8f9fa;
             min-height: 100vh;
             padding: 20px;
+            color: #2c3e50;
         }
 
         .container {
@@ -25,69 +26,92 @@
 
         .header {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            text-align: center;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .header h1 {
-            color: #333;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.875rem;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
 
         .header p {
-            color: #666;
-            font-size: 1.1rem;
+            color: #64748b;
+            font-size: 1rem;
+            line-height: 1.5;
         }
 
         .card {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            border: 1px solid #e1e8ed;
+            border-radius: 6px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
         }
 
         .card h2 {
-            color: #333;
+            color: #2c3e50;
             margin-bottom: 20px;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f1f5f9;
         }
 
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #3b82f6;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
+            padding: 12px 20px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
             text-decoration: none;
             display: inline-block;
+            margin: 4px 8px 4px 0;
+            text-align: center;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background-color: #2563eb;
+        }
+
+        .btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            background-color: #059669;
+        }
+
+        .btn-success:hover {
+            background-color: #047857;
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+            background-color: #dc2626;
+        }
+
+        .btn-danger:hover {
+            background-color: #b91c1c;
         }
 
         .btn-secondary {
-            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            background-color: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
         }
 
         .form-grid {
@@ -110,17 +134,19 @@
 
         .form-group input,
         .form-group select {
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
+            padding: 12px 16px;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            background-color: white;
         }
 
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         .property-list {
@@ -129,16 +155,11 @@
         }
 
         .property-card {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 25px;
-            border-left: 5px solid #667eea;
-            transition: all 0.3s ease;
-        }
-
-        .property-card:hover {
-            background: #e9ecef;
-            transform: translateX(5px);
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 20px;
+            border-left: 4px solid #3b82f6;
         }
 
         .property-header {
@@ -210,12 +231,12 @@
         .modal-content {
             background: white;
             margin: 5% auto;
-            padding: 30px;
-            border-radius: 15px;
+            padding: 32px;
+            border-radius: 6px;
             width: 90%;
             max-width: 600px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            animation: slideIn 0.3s ease;
+            border: 1px solid #e1e8ed;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .modal-header {
@@ -277,18 +298,18 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏠 Property Management</h1>
+            <h1>Property Management</h1>
             <p>Add, edit, and manage your rental properties</p>
         </div>
 
         <div class="nav-buttons">
             <a href="/" class="btn btn-secondary">← Back to Dashboard</a>
-            <a href="/settings" class="btn btn-secondary">⚙️ Settings</a>
+            <a href="/settings" class="btn btn-secondary">Settings</a>
             <button onclick="openAddModal()" class="btn btn-success">+ Add New Property</button>
         </div>
 
         <div class="card">
-            <h2>🏘️ Your Properties</h2>
+            <h2>Your Properties</h2>
             <div id="propertyList" class="property-list">
                 {% if properties %}
                     {% for property in properties %}
@@ -299,30 +320,30 @@
                                 <p style="color: #666;">{{ property.tenant_name }}</p>
                             </div>
                             <div class="property-actions">
-                                <button onclick="editProperty({{ property.id }})" class="btn btn-secondary">✏️ Edit</button>
-                                <button onclick="deleteProperty({{ property.id }})" class="btn btn-danger">🗑️ Delete</button>
+                                <button onclick="editProperty({{ property.id }})" class="btn btn-secondary">Edit</button>
+                                <button onclick="deleteProperty({{ property.id }})" class="btn btn-danger">Delete</button>
                             </div>
                         </div>
                         
                         <div class="property-details">
                             <div class="detail-item">
-                                <span class="detail-label">💰 Rent:</span>
+                                <span class="detail-label">Rent:</span>
                                 <span class="detail-value">${{ property.rent_amount }}</span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">📅 Due:</span>
+                                <span class="detail-label">Due:</span>
                                 <span class="detail-value">{{ property.due_day }}</span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">🔄 Frequency:</span>
+                                <span class="detail-label">Frequency:</span>
                                 <span class="detail-value">{{ property.payment_frequency or '1 week' }}</span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">🔍 Keyword:</span>
+                                <span class="detail-label">Keyword:</span>
                                 <span class="detail-value">{{ property.payment_keyword }}</span>
                             </div>
                             <div class="detail-item">
-                                <span class="detail-label">📆 Added:</span>
+                                <span class="detail-label">Added:</span>
                                 <span class="detail-value">{{ property.created_at[:10] if property.created_at else 'N/A' }}</span>
                             </div>
                         </div>
@@ -532,9 +553,9 @@
             `;
             
             if (type === 'success') {
-                notification.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+                notification.style.background = '#059669';
             } else {
-                notification.style.background = 'linear-gradient(135deg, #dc3545 0%, #fd7e14 100%)';
+                notification.style.background = '#dc2626';
             }
             
             notification.textContent = message;
