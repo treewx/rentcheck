@@ -253,6 +253,62 @@
             text-decoration: underline;
         }
 
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            right: 20px;
+            top: 15px;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .guide-image {
+            width: 100%;
+            max-width: 600px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .guide-step {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
+        }
+
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
@@ -281,12 +337,16 @@
         <!-- API Configuration -->
         <div class="card">
             <h2>🔐 Akahu API Configuration</h2>
+            <p style="color: #666; margin-bottom: 20px; font-size: 1rem;">
+                <a href="https://akahu.nz/consumer" target="_blank" style="color: #667eea; text-decoration: none; font-weight: bold;">Akahu</a> 
+                is an intermediary that securely connects your New Zealand bank accounts to authorized applications like RentCheck.
+            </p>
             
             <div class="info-box">
                 <h4>How to get your Akahu API credentials:</h4>
-                <p>1. Go to <a href="https://developers.akahu.io" target="_blank">Akahu Developer Portal</a></p>
-                <p>2. Create a new app or use an existing one</p>
-                <p>3. Copy your App Token and User Token</p>
+                <p>1. Go to <a href="https://my.akahu.nz/login" target="_blank">Akahu Personal Apps</a></p>
+                <p>2. Create a new personal app or use an existing one</p>
+                <p>3. Copy your App Token and User Token <a href="#" onclick="showTokenGuide(); return false;" style="color: #667eea;">📖 Show me where</a></p>
                 <p>4. Paste them below and test the connection</p>
             </div>
 
@@ -296,16 +356,34 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="akahuAppToken">Akahu App Token *</label>
-                        <input type="text" id="akahuAppToken" name="akahu_app_token" 
-                               value="{{ akahu_app_token }}" placeholder="app_token_xxxxx" required>
-                        <small>Your Akahu application token</small>
+                        <div style="position: relative;">
+                            <input type="password" id="akahuAppToken" name="akahu_app_token" 
+                                   value="{{ akahu_app_token }}" placeholder="app_token_xxxxx" required
+                                   autocomplete="off" autocapitalize="off" spellcheck="false">
+                            {% if has_app_token %}
+                            <button type="button" onclick="toggleTokenVisibility('akahuAppToken')" 
+                                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 14px;">
+                                👁️
+                            </button>
+                            {% endif %}
+                        </div>
+                        <small>Your Akahu application token {% if has_app_token %}- Click 👁️ to reveal/edit{% endif %}</small>
                     </div>
                     
                     <div class="form-group">
                         <label for="akahuUserToken">Akahu User Token *</label>
-                        <input type="text" id="akahuUserToken" name="akahu_user_token" 
-                               value="{{ akahu_user_token }}" placeholder="user_token_xxxxx" required>
-                        <small>Your Akahu user token</small>
+                        <div style="position: relative;">
+                            <input type="password" id="akahuUserToken" name="akahu_user_token" 
+                                   value="{{ akahu_user_token }}" placeholder="user_token_xxxxx" required
+                                   autocomplete="off" autocapitalize="off" spellcheck="false">
+                            {% if has_user_token %}
+                            <button type="button" onclick="toggleTokenVisibility('akahuUserToken')" 
+                                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 14px;">
+                                👁️
+                            </button>
+                            {% endif %}
+                        </div>
+                        <small>Your Akahu user token {% if has_user_token %}- Click 👁️ to reveal/edit{% endif %}</small>
                     </div>
                 </div>
                 
@@ -380,6 +458,47 @@
             
             <div style="display: flex; gap: 15px;">
                 <a href="/manual_check_overdue" class="btn" target="_blank">🔍 Manual Overdue Check</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Token Guide Modal -->
+    <div id="tokenGuideModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeTokenGuide()">&times;</span>
+            <h2>🔍 How to Find Your Akahu Tokens</h2>
+            
+            <div class="guide-step">
+                <h3>Step 1: Go to Akahu Personal Apps</h3>
+                <p>Visit <a href="https://my.akahu.nz/login" target="_blank">https://my.akahu.nz/login</a> and log in to your Akahu account.</p>
+            </div>
+
+            <div class="guide-step">
+                <h3>Step 2: Create or Select Your Personal App</h3>
+                <p>If you don't have a personal app yet, create one by clicking "Create Personal App". Give it a name like "RentCheck".</p>
+            </div>
+
+            <div class="guide-step">
+                <h3>Step 3: Find Your Tokens</h3>
+                <p>Once you're in your app dashboard, you'll see two important tokens:</p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>App Token:</strong> Starts with "app_token_" - This identifies your RentCheck app</li>
+                    <li><strong>User Token:</strong> Starts with "user_token_" - This gives access to your bank accounts</li>
+                </ul>
+            </div>
+
+            <div class="guide-step">
+                <h3>Step 4: Copy the Tokens</h3>
+                <p>Click the copy button next to each token and paste them into the RentCheck settings form below.</p>
+                <p style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    <strong>⚠️ Security Note:</strong> These tokens give access to your bank data. Keep them secure and don't share them with anyone.
+                </p>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <p style="color: #666; font-style: italic;">
+                    The Akahu interface shows your tokens clearly labeled. Look for sections titled "App Token" and "User Token".
+                </p>
             </div>
         </div>
     </div>
@@ -478,12 +597,69 @@
             location.reload();
         }
 
+        function showTokenGuide() {
+            document.getElementById('tokenGuideModal').style.display = 'block';
+        }
+
+        function closeTokenGuide() {
+            document.getElementById('tokenGuideModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('tokenGuideModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function toggleTokenVisibility(fieldId) {
+            const field = document.getElementById(fieldId);
+            const button = field.parentElement.querySelector('button');
+            
+            if (field.type === 'password') {
+                // Show token - need to fetch actual value
+                fetchActualToken(fieldId).then(actualValue => {
+                    field.type = 'text';
+                    field.value = actualValue;
+                    button.textContent = '🙈';
+                    field.focus();
+                    field.select();
+                });
+            } else {
+                // Hide token
+                field.type = 'password';
+                button.textContent = '👁️';
+                // Re-mask the token
+                location.reload();
+            }
+        }
+
+        async function fetchActualToken(fieldId) {
+            // For now, we'll prompt user to enter if they want to edit
+            // This is more secure than fetching actual tokens over the network
+            const tokenType = fieldId === 'akahuAppToken' ? 'App Token' : 'User Token';
+            const newValue = prompt(`Enter new ${tokenType} (leave blank to keep current):`);
+            return newValue || document.getElementById(fieldId).value;
+        }
+
         // Handle Akahu settings form submission
         document.getElementById('settingsForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
             const data = Object.fromEntries(formData.entries());
+            
+            // Only send tokens if they don't contain mask characters
+            const appTokenField = document.getElementById('akahuAppToken');
+            const userTokenField = document.getElementById('akahuUserToken');
+            
+            if (data.akahu_app_token && data.akahu_app_token.includes('•')) {
+                delete data.akahu_app_token; // Don't update if masked
+            }
+            if (data.akahu_user_token && data.akahu_user_token.includes('•')) {
+                delete data.akahu_user_token; // Don't update if masked
+            }
             
             try {
                 const response = await fetch('/save_settings', {
@@ -498,8 +674,9 @@
                 
                 if (result.success) {
                     showNotification('Akahu settings saved successfully!', 'success');
-                    // Clear connection status
+                    // Clear connection status and reload to re-mask tokens
                     document.getElementById('connectionStatus').innerHTML = '';
+                    setTimeout(() => location.reload(), 1000);
                 } else {
                     showNotification('Error saving settings: ' + result.error, 'error');
                 }

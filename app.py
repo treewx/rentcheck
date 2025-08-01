@@ -666,6 +666,10 @@ def settings():
         akahu_user_token = get_setting('akahu_user_token', '', user_id)
         email_recipient = get_setting('email_recipient', '', user_id)
         
+        # Mask tokens for security (show only if empty)
+        masked_app_token = '' if not akahu_app_token else '•' * 20 + akahu_app_token[-8:] if len(akahu_app_token) > 8 else '•' * len(akahu_app_token)
+        masked_user_token = '' if not akahu_user_token else '•' * 20 + akahu_user_token[-8:] if len(akahu_user_token) > 8 else '•' * len(akahu_user_token)
+        
         # Get configured accounts
         with get_db() as conn:
             accounts = conn.execute('''
@@ -674,11 +678,13 @@ def settings():
         
         app.logger.info(f'Settings loaded successfully for user {user_id}')
         return render_template('settings.html', 
-                             akahu_app_token=akahu_app_token,
-                             akahu_user_token=akahu_user_token,
+                             akahu_app_token=masked_app_token,
+                             akahu_user_token=masked_user_token,
                              email_recipient=email_recipient,
                              accounts=accounts,
-                             current_user=current_user)
+                             current_user=current_user,
+                             has_app_token=bool(akahu_app_token),
+                             has_user_token=bool(akahu_user_token))
     except Exception as e:
         app.logger.error(f'Error in settings route: {str(e)}')
         return render_template('error.html', error_code=500, error_message='Internal server error in settings'), 500
@@ -845,6 +851,7 @@ def toggle_account(account_id):
                 
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+
 
 @app.route('/add_property', methods=['POST'])
 @login_required
